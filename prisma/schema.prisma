@@ -1,0 +1,370 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// user roles enum
+enum UserRole {
+  guest
+  host
+}
+
+//bookingstatus enums
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+//payment method enums
+enum PaymentMethod {
+  CASH
+  CARD
+}
+
+//payment status  enums
+enum PaymentStatus {
+  REJECTED
+  CONFIRMED
+}
+
+//support category
+enum SupportCategory {
+  ACCOUNT
+  TECHNICAL
+  PAYMENT
+  BOOKING
+  LISTING
+  OTHER
+  VERIFICATION
+}
+
+// support status
+enum SupportStatus {
+  OPEN
+  INPROGRESS
+  CLOSED
+}
+
+// report type  enum
+enum ReportType {
+  COMMENT
+  IMAGE
+  HOST
+  LISTING
+  USER
+}
+
+//report reason enum
+enum ReportReason {
+  SPAM
+  RACISM
+  HARMFUL
+  OTHER
+}
+
+//report status enum
+enum ReportStatus {
+  OPEN
+  CLOSED
+}
+
+//users
+model Users {
+  id              Int      @id @default(autoincrement())
+  full_name       String   @db.VarChar(40)
+  email           String   @unique @db.VarChar(40)
+  phone           String?  @db.VarChar(15)
+  password        String
+  role            UserRole @default(guest)
+  refresh_token   String?
+  is_active       Boolean  @default(false)
+  is_verified     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  activation_link String?  @default(uuid())
+
+  listings      Listing[]
+  Reviews       Reviews[]
+  Favourite     Favourite[]
+  sentChats     Chat[]          @relation("SentMessages")
+  receivedChats Chat[]          @relation("ReceivedMessages")
+  bookings      Booking[]
+  Notification  Notification[]
+  SupportTicket SupportTicket[]
+  Report        Report[]
+
+  @@map("users")
+}
+
+//admin
+model Admin {
+  id            Int     @id @default(autoincrement())
+  full_name     String  @db.VarChar(40)
+  email         String  @unique @db.VarChar(40)
+  password      String
+  refresh_token String?
+  is_creator    Boolean @default(false)
+  is_active     Boolean @default(true)
+
+  SupportTicket SupportTicket[]
+  Report        Report[]
+
+  @@map("admin")
+}
+
+//listing
+model Listing {
+  id            Int    @id @default(autoincrement())
+  title         String
+  description   String
+  pricePerNight Float
+  location      String
+  maxGuest      Int
+  host          Users  @relation(fields: [hostId], references: [id])
+  hostId        Int
+
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  ListingAvailability ListingAvailability[]
+  Listing_offers      Listing_offers[]
+  Listing_rules       Listing_rules[]
+  Images              Images[]
+  Reviews             Reviews[]
+  Favourite           Favourite[]
+  Chat                Chat[]
+  Booking             Booking[]
+
+  @@map("listing")
+}
+
+//region
+model Region {
+  id       Int        @id @default(autoincrement())
+  name     String
+  District District[]
+
+  @@map("region")
+}
+
+//district
+model District {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  region   Region @relation(fields: [regionId], references: [id])
+  regionId Int
+
+  @@map("district")
+}
+
+//listing availability
+model ListingAvailability {
+  id            Int      @id @default(autoincrement())
+  date          DateTime
+  isAvailable   Boolean
+  priceOverride Float?
+
+  listing   Listing @relation(fields: [listingId], references: [id])
+  listingId Int
+
+  @@map("listingAvailebility")
+}
+
+//house offers
+model House_offers {
+  id             Int              @id @default(autoincrement())
+  name           String
+  description    String
+  Listing_offers Listing_offers[]
+
+  @@map("house_offers")
+}
+
+//listing offers
+model Listing_offers {
+  id Int @id @default(autoincrement())
+
+  listing   Listing @relation(fields: [listingId], references: [id])
+  listingId Int
+
+  house_offer   House_offers @relation(fields: [house_offerId], references: [id])
+  house_offerId Int
+
+  @@map("listing_offers")
+}
+
+//listing rules
+model Listing_rules {
+  id          Int    @id @default(autoincrement())
+  description String
+
+  listing    Listing @relation(fields: [listing_id], references: [id])
+  listing_id Int
+
+  @@map("listing_rules")
+}
+
+//images
+model Images {
+  id Int @id @default(autoincrement())
+
+  image_url String
+  is_cover  Boolean @default(true)
+
+  listing    Listing @relation(fields: [listing_id], references: [id])
+  listing_id Int
+
+  @@map("images")
+}
+
+//reviews
+model Reviews {
+  id      Int    @id @default(autoincrement())
+  rating  Int
+  comment String
+
+  listing   Listing @relation(fields: [listingId], references: [id])
+  listingId Int
+
+  guest   Users @relation(fields: [guestId], references: [id])
+  guestId Int
+
+  @@map("reviews")
+}
+
+//favourites
+model Favourite {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  guest   Users @relation(fields: [guestId], references: [id])
+  guestId Int
+
+  listing   Listing @relation(fields: [listingId], references: [id])
+  listingId Int
+
+  @@map("favourites")
+}
+
+//chat
+model Chat {
+  id Int @id @default(autoincrement())
+
+  sender   Users @relation("SentMessages", fields: [senderId], references: [id])
+  senderId Int
+
+  receiver   Users @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  receiverId Int
+
+  listing   Listing @relation(fields: [listingId], references: [id])
+  listingId Int
+
+  messages Message[]
+
+  @@map("chat")
+}
+
+//message
+model Message {
+  id     Int       @id @default(autoincrement())
+  text   String
+  isRead Boolean   @default(false)
+  sentAt DateTime  @default(now())
+  readAt DateTime?
+
+  chat   Chat @relation(fields: [chatId], references: [id])
+  chatId Int
+
+  @@map("messages")
+}
+
+//bookings
+model Booking {
+  id           Int           @id @default(autoincrement())
+  checkInDate  DateTime
+  checkOutDate DateTime
+  guestCount   Int
+  hasPet       Boolean
+  totalPrice   Float
+  status       BookingStatus @default(PENDING)
+
+  listing   Listing @relation(fields: [listingId], references: [id])
+  listingId Int
+
+  guest   Users    @relation(fields: [guestId], references: [id])
+  guestId Int
+  Payment Payment?
+
+  @@map("bookings")
+}
+
+// payment
+model Payment {
+  id            Int           @id @default(autoincrement())
+  paymentMethod PaymentMethod
+  amount        Float
+  status        PaymentStatus
+
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  bookingId Int     @unique
+
+  @@map("payments")
+}
+
+//notification
+model Notification {
+  id     Int     @id @default(autoincrement())
+  title  String
+  body   String
+  isRead Boolean @default(false)
+
+  user   Users @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@map("notifications")
+}
+
+//support ticker
+model SupportTicket {
+  id          Int             @id @default(autoincrement())
+  category    SupportCategory
+  subject     String
+  description String
+  status      SupportStatus   @default(OPEN)
+
+  adminId Int
+  Users   Users @relation(fields: [usersId], references: [id])
+  usersId Int
+  Admin   Admin @relation(fields: [adminId], references: [id])
+
+  @@map("supportTicket")
+}
+
+model Report {
+  id                Int          @id @default(autoincrement())
+  reportedSubjectId Int
+  reportType        ReportType
+  reason            ReportReason
+  description       String?
+  status            ReportStatus @default(OPEN)
+
+  reporter   Users @relation(fields: [reporterId], references: [id])
+  reporterId Int
+
+  admin   Admin @relation(fields: [adminId], references: [id])
+  adminId Int
+
+  @@map("reports")
+}
