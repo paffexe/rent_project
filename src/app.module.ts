@@ -12,6 +12,11 @@ import { ListingModule } from "./listing/listing.module";
 import { ListingRulesModule } from './listing_rules/listing_rules.module';
 import { ImagesModule } from './images/images.module';
 import { HouseOffersModule } from './house_offers/house_offers.module';
+import { ListingOffersModule } from './listing_offers/listing_offers.module';
+import { MessagesModule } from './messages/messages.module';
+import { ChatModule } from './chat/chat.module';
+import { PaymentsModule } from './payments/payments.module';
+import { BookingsModule } from './bookings/bookings.module';
 
 @Module({
   imports: [
@@ -28,6 +33,11 @@ import { HouseOffersModule } from './house_offers/house_offers.module';
     ListingRulesModule,
     ImagesModule,
     HouseOffersModule,
+    ListingOffersModule,
+    MessagesModule,
+    ChatModule,
+    PaymentsModule,
+    BookingsModule,
   ],
   controllers: [],
   providers: [],

@@ -37,6 +37,7 @@ enum PaymentMethod {
 enum PaymentStatus {
   REJECTED
   CONFIRMED
+  REFUNDED
 }
 
 //support category
@@ -316,6 +317,7 @@ model Payment {
   paymentMethod PaymentMethod
   amount        Float
   status        PaymentStatus
+  paid_at       DateTime      @default(now())
 
   booking   Booking @relation(fields: [bookingId], references: [id])
   bookingId Int     @unique
