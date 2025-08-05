@@ -268,7 +268,6 @@ export class AuthService {
     // const hashedRefreshToken = await bcrypt.hash(tokens.accessToken, 7);
     const hashedRefreshToken = await bcrypt.hash(tokens.accessToken, 7);
 
-
     await this.prismaService.admin.update({
       where: { id: user.id },
       data: { refresh_token: hashedRefreshToken },

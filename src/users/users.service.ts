@@ -96,4 +96,27 @@ export class UsersService {
     });
     return updatedUser;
   }
+
+  async activateUser(activation_link: string) {
+    if (!activation_link) {
+      throw new BadRequestException("Activation link not found");
+    }
+
+    const user = await this.prismaService.users.findFirst({
+      where: { activation_link },
+    });
+
+    if (!user || user.is_active) {
+      throw new BadRequestException("User already activated or invalid link");
+    }
+
+    await this.prismaService.users.update({
+      where: { id: user.id },
+      data: { is_active: true },
+    });
+
+    return {
+      message: "User activated successfully",
+    };
+  }
 }
