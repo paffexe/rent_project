@@ -64,21 +64,62 @@ export class ReportsService {
         `Listing with ID: ${reportedSubjectId} doesn't exsist`
       );
     }
+
+    const report = await this.prisma.report.create({ data: createReportDto });
+
+    return {
+      message: "Your report has been sent",
+      report: report,
+    };
   }
 
-  findAll() {
-    return `This action returns all reports`;
+  async findAll() {
+    return this.prisma.report.findMany({
+      include: {
+        admin: true,
+        reporter: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} report`;
+  async findOne(id: number) {
+    const report = await this.prisma.report.findUnique({
+      where: { id },
+      include: {
+        admin: true,
+        reporter: true,
+      },
+    });
+
+    if (!report) {
+      throw new NotFoundException(`Report with ID ${id} not found`);
+    }
+
+    return report;
   }
 
-  update(id: number, updateReportDto: UpdateReportDto) {
-    return `This action updates a #${id} report`;
+  async update(id: number, updateReportDto: UpdateReportDto) {
+    const report = await this.prisma.report.findUnique({ where: { id } });
+
+    if (!report) {
+      throw new NotFoundException(`Report with ID ${id} not found`);
+    }
+
+    return this.prisma.report.update({
+      where: { id },
+      data: updateReportDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} report`;
+  async remove(id: number) {
+    const report = await this.prisma.report.findUnique({ where: { id } });
+
+    if (!report) {
+      throw new NotFoundException(`Report with ID ${id} not found`);
+    }
+
+    return this.prisma.report.delete({
+      where: { id },
+    });
   }
 }

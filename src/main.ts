@@ -3,9 +3,18 @@ import { AppModule } from "./app.module";
 import { ConfigService } from "@nestjs/config";
 import * as cookieParser from "cookie-parser";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { winstonConfig } from "./common/logging/winston.logging";
+import { AllExceptionFilter } from "./common/errors/error.handling";
+import { WinstonModule } from "nest-winston";
 
 async function start() {
-  const app = await NestFactory.create(AppModule);
+  ////
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(winstonConfig),
+  });
+  ////
+  app.useGlobalFilters(new AllExceptionFilter());
+
   const config = app.get(ConfigService);
   app.setGlobalPrefix("api");
   const PORT = config.get<number>("PORT");

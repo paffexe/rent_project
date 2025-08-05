@@ -19,6 +19,8 @@ import { PaymentsModule } from './payments/payments.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { SupportTicketModule } from './support_ticket/support_ticket.module';
 import { ReportsModule } from './reports/reports.module';
+import { NotificationModule } from './notification/notification.module';
+import { FavouritesModule } from './favourites/favourites.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { ReportsModule } from './reports/reports.module';
     BookingsModule,
     SupportTicketModule,
     ReportsModule,
+    NotificationModule,
+    FavouritesModule,
   ],
   controllers: [],
   providers: [],
