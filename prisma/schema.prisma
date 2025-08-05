@@ -117,7 +117,7 @@ model Admin {
   password      String
   refresh_token String?
   is_creator    Boolean @default(false)
-  is_active     Boolean @default(true)
+  is_active     Boolean @default(false)
 
   SupportTicket SupportTicket[]
   Report        Report[]

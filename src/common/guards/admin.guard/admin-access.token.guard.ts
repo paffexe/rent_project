@@ -12,7 +12,7 @@ export class AdminAccessTokenGuard extends AuthGuard("admin-access-jwt") {
   canActivate(
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const isPublic = this.reflector.getAllAndOverride("isPublic", [
+    const isPublic = this.reflector.getAllAndOverride("forAdmin", [
       context.getHandler(),
       context.getClass(),
     ]);

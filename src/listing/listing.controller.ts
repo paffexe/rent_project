@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ListingService } from "./listing.service";
 import { CreateListingDto } from "./dto/create-listing.dto";

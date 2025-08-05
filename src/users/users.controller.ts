@@ -6,10 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { UserSelfGuard } from "../common/guards/user.guard/self.guard";
+import { AuthGuard } from "@nestjs/passport";
+import { AdminAccessTokenGuard } from "../common/guards/admin.guard/admin-access.token.guard";
+import { AccessTokenGuard } from "../common/guards/user.guard/access.token.guard";
+import { RefreshTokenGuard } from "../common/guards/user.guard/refresh-token.guard";
 
 @Controller("users")
 export class UsersController {
@@ -25,6 +31,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.usersService.findOne(+id);

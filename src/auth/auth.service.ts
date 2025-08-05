@@ -60,6 +60,7 @@ export class AuthService {
       id: admin.id,
       email: admin.email,
       is_creator: admin.is_creator,
+      is_active: admin.is_active,
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -216,7 +217,7 @@ export class AuthService {
     const refresh_token = await bcrypt.hash(refreshToken, 7);
     await this.prismaService.admin.update({
       where: { id: admin.id },
-      data: { refresh_token },
+      data: { refresh_token, is_active: true },
     });
 
     res.cookie("refreshToken", refreshToken, {
@@ -237,6 +238,7 @@ export class AuthService {
       },
       data: {
         refresh_token: null,
+        is_active: false,
       },
     });
 
