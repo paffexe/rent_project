@@ -21,6 +21,7 @@ import { SupportTicketModule } from './support_ticket/support_ticket.module';
 import { ReportsModule } from './reports/reports.module';
 import { NotificationModule } from './notification/notification.module';
 import { FavouritesModule } from './favourites/favourites.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { FavouritesModule } from './favourites/favourites.module';
     ReportsModule,
     NotificationModule,
     FavouritesModule,
+    ReviewsModule,
   ],
   controllers: [],
   providers: [],

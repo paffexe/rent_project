@@ -37,6 +37,7 @@ export class AuthService {
       id: user.id,
       email: user.email,
       is_active: user.is_active,
+      is_verified: user.is_verified,
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -285,5 +286,58 @@ export class AuthService {
       adminId: user.id,
       accessToken: tokens.accessToken,
     };
+  }
+
+  // super admin
+
+  async superAdminLog(loginAdmin: SignInAdminDto, res: Response) {
+    const { email, password: log_password } = loginAdmin;
+
+    const admin = await this.prismaService.rootUser.findUnique({
+      where: { email },
+    });
+
+    if (!admin) {
+      throw new UnauthorizedException("Email yoki password noto'g'ri");
+    }
+
+    const isValid = await bcrypt.compare(log_password, admin.password);
+
+    if (!isValid) {
+      throw new UnauthorizedException("Email yoki password noto'g'ri");
+    }
+
+    const { accessToken, refreshToken } = await this.generateAdminTokens(admin);
+    const refresh_token = await bcrypt.hash(refreshToken, 7);
+    await this.prismaService.rootUser.update({
+      where: { id: admin.id },
+      data: { refresh_token, is_active: true },
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: +process.env.ADMIN_COOKIE_TIME!,
+      httpOnly: true,
+    });
+
+    return { message: "Tizimga xush kelibsiz", id: admin.id, accessToken };
+  }
+
+  async logoutSuperAdmin(adminId: number, res: Response) {
+    const user = await this.prismaService.admin.updateMany({
+      where: {
+        id: adminId,
+        refresh_token: {
+          not: null,
+        },
+      },
+      data: {
+        refresh_token: null,
+        is_active: false,
+      },
+    });
+
+    if (!user) throw new ForbiddenException("Access denied");
+    res.clearCookie("refreshToken");
+    return true;
   }
 }

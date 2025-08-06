@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ListingOffersService } from "./listing_offers.service";
 import { CreateListingOfferDto } from "./dto/create-listing_offer.dto";
@@ -17,12 +18,15 @@ import {
   ApiParam,
   ApiBody,
 } from "@nestjs/swagger";
+import { RefreshTokenGuard } from "../common/guards/user.guard/refresh-token.guard";
+import { UserSelfGuard } from "../common/guards/user.guard/self.guard";
 
 @ApiTags("listing-offers")
 @Controller("listing-offers")
 export class ListingOffersController {
   constructor(private readonly listingOffersService: ListingOffersService) {}
 
+  @UseGuards(RefreshTokenGuard)
   @Post()
   @ApiOperation({ summary: "Create a new listing offer" })
   @ApiBody({ type: CreateListingOfferDto })
@@ -41,6 +45,7 @@ export class ListingOffersController {
     return this.listingOffersService.findAll();
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Get(":id")
   @ApiOperation({ summary: "Get a listing offer by ID" })
   @ApiParam({ name: "id", type: Number, description: "Listing offer ID" })
@@ -50,6 +55,7 @@ export class ListingOffersController {
     return this.listingOffersService.findOne(+id);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update a listing offer by ID" })
   @ApiParam({ name: "id", type: Number, description: "Listing offer ID" })
@@ -65,6 +71,7 @@ export class ListingOffersController {
     return this.listingOffersService.update(+id, updateListingOfferDto);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a listing offer by ID" })
   @ApiParam({ name: "id", type: Number, description: "Listing offer ID" })

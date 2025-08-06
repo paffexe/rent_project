@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -18,12 +19,14 @@ import {
 import { RegionService } from "./region.service";
 import { CreateRegionDto } from "./dto/create-region.dto";
 import { UpdateRegionDto } from "./dto/update-region.dto";
+import { AdminRefreshTokenGuard } from "../common/guards/admin.guard/admin-refresh-token.guard";
 
 @ApiTags("regions")
 @Controller("region")
 export class RegionController {
   constructor(private readonly regionService: RegionService) {}
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Post()
   @ApiOperation({ summary: "Create a new region" })
   @ApiBody({ type: CreateRegionDto })
@@ -48,6 +51,7 @@ export class RegionController {
     return this.regionService.findOne(+id);
   }
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update a region" })
   @ApiParam({ name: "id", type: Number, description: "Region ID" })
@@ -57,6 +61,7 @@ export class RegionController {
     return this.regionService.update(+id, updateRegionDto);
   }
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a region" })
   @ApiParam({ name: "id", type: Number, description: "Region ID" })

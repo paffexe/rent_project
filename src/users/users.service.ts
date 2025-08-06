@@ -64,7 +64,6 @@ export class UsersService {
 
       if (updateUserDto.password) {
         updateUserDto.password = await bcrypt.hash(updateUserDto.password, 7);
-        // Remove confirm_password from the data to be updated
         delete updateUserDto.confirm_password;
       }
     }

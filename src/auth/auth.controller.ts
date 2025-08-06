@@ -86,4 +86,21 @@ export class AuthController {
   ) {
     return this.authService.refreshAdminToken(+adminId, refreshToken, res);
   }
+
+  @Post("login/admin/super")
+  async logSuper(
+    @Body() loginAdminDto: SignInAdminDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    return this.authService.superAdminLog(loginAdminDto, res);
+  }
+
+  @UseGuards(AdminRefreshTokenGuard)
+  @Post("logout/admin/super")
+  logoutSuper(
+    @GetCurrentAdminId() adminId: number,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<boolean> {
+    return this.authService.logoutSuperAdmin(+adminId, res);
+  }
 }

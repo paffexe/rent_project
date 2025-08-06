@@ -18,12 +18,16 @@ import {
   ApiParam,
   ApiBody,
 } from "@nestjs/swagger";
+import { RefreshTokenGuard } from "../common/guards/user.guard/refresh-token.guard";
+import { UserRoleGuard } from "../common/guards/user.guard/roles.guard";
+import { UserSelfGuard } from "../common/guards/user.guard/self.guard";
 
 @ApiTags("listings")
 @Controller("listing")
 export class ListingController {
   constructor(private readonly listingService: ListingService) {}
 
+  @UseGuards(RefreshTokenGuard, UserRoleGuard)
   @Post()
   @ApiOperation({ summary: "Create a new listing" })
   @ApiBody({ type: CreateListingDto })
@@ -48,6 +52,7 @@ export class ListingController {
     return this.listingService.findOne(+id);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update a listing by ID" })
   @ApiParam({ name: "id", type: Number, description: "Listing ID" })
@@ -57,6 +62,7 @@ export class ListingController {
     return this.listingService.update(+id, updateListingDto);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a listing by ID" })
   @ApiParam({ name: "id", type: Number, description: "Listing ID" })

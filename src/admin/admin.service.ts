@@ -65,7 +65,6 @@ export class AdminService {
 
     const { confirm_password, password } = updateAdminDto;
 
-    // Only validate passwords if they are provided
     if (password || confirm_password) {
       if (confirm_password !== password) {
         throw new BadRequestException("Passwords must match!");
@@ -73,7 +72,6 @@ export class AdminService {
 
       if (updateAdminDto.password) {
         updateAdminDto.password = await bcrypt.hash(updateAdminDto.password, 7);
-        // Remove confirm_password from the data to be updated
         delete updateAdminDto.confirm_password;
       }
     }

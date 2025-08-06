@@ -42,8 +42,10 @@ export class ListingService {
 
   async findAll() {
     return this.prisma.listing.findMany({
-      include: {
-        host: true,
+      select: {
+        title: true,
+        pricePerNight: true,
+        Images: { where: { is_cover: true } },
       },
     });
   }
@@ -51,7 +53,37 @@ export class ListingService {
   async findOne(id: number) {
     const listing = await this.prisma.listing.findUnique({
       where: { id },
-      include: { host: true },
+      select: {
+        title: true,
+        description: true,
+        pricePerNight: true,
+        location: true,
+        Images: { select: { image_url: true } },
+        host: {
+          select: {
+            full_name: true,
+            phone: true,
+            email: true,
+          },
+        },
+        Reviews: { select: { comment: true, rating: true } },
+        Listing_rules: { select: { description: true } },
+        Listing_offers: {
+          select: {
+            house_offer: { select: { name: true, description: true } },
+          },
+        },
+        region: {
+          select: {
+            name: true,
+            District: { select: { name: true } },
+          },
+        },
+        ListingAvailability: {
+          select: { isAvailable: true, date: true, priceOverride: true },
+          where: { isAvailable: true },
+        },
+      },
     });
 
     if (!listing) {

@@ -41,6 +41,9 @@ export class CreateListingDto {
   @Min(1)
   maxGuest: number;
 
+  @IsInt()
+  regionId: number;
+
   @ApiProperty({
     example: 1,
     description: "ID of the host (foreign key)",

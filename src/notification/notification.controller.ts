@@ -6,17 +6,20 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { NotificationService } from "./notification.service";
 import { CreateNotificationDto } from "./dto/create-notification.dto";
 import { UpdateNotificationDto } from "./dto/update-notification.dto";
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from "@nestjs/swagger";
+import { AdminRefreshTokenGuard } from "../common/guards/admin.guard/admin-refresh-token.guard";
 
 @ApiTags("Notifications")
 @Controller("notification")
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Post()
   @ApiOperation({ summary: "Create a new notification" })
   @ApiResponse({
@@ -43,6 +46,7 @@ export class NotificationController {
     return this.notificationService.findOne(+id);
   }
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update a notification" })
   @ApiParam({ name: "id", type: Number })
@@ -57,6 +61,7 @@ export class NotificationController {
     return this.notificationService.update(+id, updateNotificationDto);
   }
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a notification" })
   @ApiParam({ name: "id", type: Number })

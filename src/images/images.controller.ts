@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ImagesService } from "./images.service";
 import { CreateImageDto } from "./dto/create-image.dto";
@@ -17,12 +18,15 @@ import {
   ApiParam,
   ApiBody,
 } from "@nestjs/swagger";
+import { RefreshTokenGuard } from "../common/guards/user.guard/refresh-token.guard";
+import { UserSelfGuard } from "../common/guards/user.guard/self.guard";
 
 @ApiTags("images")
 @Controller("images")
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
+  @UseGuards(RefreshTokenGuard)
   @Post()
   @ApiOperation({ summary: "Upload a new image for a listing" })
   @ApiBody({ type: CreateImageDto })
@@ -38,6 +42,7 @@ export class ImagesController {
     return this.imagesService.findAll();
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Get(":id")
   @ApiOperation({ summary: "Get image details by ID" })
   @ApiParam({ name: "id", type: Number, description: "Image ID" })
@@ -47,6 +52,7 @@ export class ImagesController {
     return this.imagesService.findOne(+id);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update image details" })
   @ApiParam({ name: "id", type: Number, description: "Image ID" })
@@ -56,6 +62,7 @@ export class ImagesController {
     return this.imagesService.update(+id, updateImageDto);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete image by ID" })
   @ApiParam({ name: "id", type: Number, description: "Image ID" })

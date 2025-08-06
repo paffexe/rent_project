@@ -81,6 +81,18 @@ enum ReportStatus {
   CLOSED
 }
 
+model RootUser {
+  id            Int     @id @default(autoincrement())
+  full_name     String
+  email         String  @unique @db.VarChar(40)
+  password      String
+  is_active     Boolean @default(false)
+  is_creator    Boolean @default(true)
+  refresh_token String?
+
+  @@map("rootuser")
+}
+
 //users
 model Users {
   id              Int      @id @default(autoincrement())
@@ -127,14 +139,16 @@ model Admin {
 
 //listing
 model Listing {
-  id            Int    @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   title         String
   description   String
   pricePerNight Float
   location      String
   maxGuest      Int
-  host          Users  @relation(fields: [hostId], references: [id])
+  host          Users   @relation(fields: [hostId], references: [id])
   hostId        Int
+  regionId      Int?
+  region        Region? @relation(fields: [regionId], references: [id])
 
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
@@ -155,6 +169,7 @@ model Region {
   id       Int        @id @default(autoincrement())
   name     String
   District District[]
+  Listing  Listing[]
 
   @@map("region")
 }

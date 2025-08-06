@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ListingAvailabilityService } from "./listing_availability.service";
 import { CreateListingAvailabilityDto } from "./dto/create-listing_availability.dto";
@@ -17,6 +18,8 @@ import {
   ApiParam,
   ApiBody,
 } from "@nestjs/swagger";
+import { RefreshTokenGuard } from "../common/guards/user.guard/refresh-token.guard";
+import { UserSelfGuard } from "../common/guards/user.guard/self.guard";
 
 @ApiTags("listing-availability")
 @Controller("listing-availability")
@@ -40,6 +43,7 @@ export class ListingAvailabilityController {
     return this.listingAvailabilityService.findAll();
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Get(":id")
   @ApiOperation({ summary: "Get a specific availability record by ID" })
   @ApiParam({ name: "id", type: Number, description: "Availability record ID" })
@@ -49,6 +53,7 @@ export class ListingAvailabilityController {
     return this.listingAvailabilityService.findOne(+id);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update a listing availability record" })
   @ApiParam({ name: "id", type: Number, description: "Availability record ID" })
@@ -67,6 +72,7 @@ export class ListingAvailabilityController {
     );
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a listing availability record" })
   @ApiParam({ name: "id", type: Number, description: "Availability record ID" })

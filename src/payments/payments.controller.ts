@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { PaymentsService } from "./payments.service";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
@@ -17,12 +18,15 @@ import {
   ApiParam,
   ApiBody,
 } from "@nestjs/swagger";
+import { RefreshTokenGuard } from "../common/guards/user.guard/refresh-token.guard";
+import { UserSelfGuard } from "../common/guards/user.guard/self.guard";
 
 @ApiTags("Payments")
 @Controller("payments")
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
+  @UseGuards(RefreshTokenGuard)
   @Post()
   @ApiOperation({ summary: "Create a new payment" })
   @ApiResponse({ status: 201, description: "Payment created successfully." })
@@ -38,6 +42,7 @@ export class PaymentsController {
     return this.paymentsService.findAll();
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Get(":id")
   @ApiOperation({ summary: "Get payment by ID" })
   @ApiResponse({ status: 200, description: "Payment details." })
@@ -46,6 +51,7 @@ export class PaymentsController {
     return this.paymentsService.findOne(+id);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update payment by ID" })
   @ApiResponse({ status: 200, description: "Payment updated successfully." })
@@ -55,6 +61,7 @@ export class PaymentsController {
     return this.paymentsService.update(+id, updatePaymentDto);
   }
 
+  @UseGuards(RefreshTokenGuard, UserSelfGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete payment by ID" })
   @ApiResponse({ status: 200, description: "Payment deleted successfully." })

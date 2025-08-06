@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { DistrictService } from "./district.service";
 import { CreateDistrictDto } from "./dto/create-district.dto";
@@ -17,12 +18,14 @@ import {
   ApiParam,
   ApiBody,
 } from "@nestjs/swagger";
+import { AdminRefreshTokenGuard } from "../common/guards/admin.guard/admin-refresh-token.guard";
 
 @ApiTags("districts")
 @Controller("district")
 export class DistrictController {
   constructor(private readonly districtService: DistrictService) {}
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Post()
   @ApiOperation({ summary: "Create a new district" })
   @ApiBody({ type: CreateDistrictDto })
@@ -47,6 +50,7 @@ export class DistrictController {
     return this.districtService.findOne(+id);
   }
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update a district by ID" })
   @ApiParam({ name: "id", type: Number, description: "District ID" })
@@ -59,6 +63,7 @@ export class DistrictController {
     return this.districtService.update(+id, updateDistrictDto);
   }
 
+  @UseGuards(AdminRefreshTokenGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a district by ID" })
   @ApiParam({ name: "id", type: Number, description: "District ID" })
