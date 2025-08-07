@@ -22,6 +22,7 @@ import { ReportsModule } from './reports/reports.module';
 import { NotificationModule } from './notification/notification.module';
 import { FavouritesModule } from './favourites/favourites.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { OtherModule } from './other/other.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     NotificationModule,
     FavouritesModule,
     ReviewsModule,
+    OtherModule,
   ],
   controllers: [],
   providers: [],

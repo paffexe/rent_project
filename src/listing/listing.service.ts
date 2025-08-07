@@ -81,7 +81,6 @@ export class ListingService {
         },
         ListingAvailability: {
           select: { isAvailable: true, date: true, priceOverride: true },
-          where: { isAvailable: true },
         },
       },
     });

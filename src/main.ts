@@ -22,28 +22,28 @@ async function start() {
   const PORT = config.get<number>("PORT");
   app.use(cookieParser());
 
-  ///
-  // const prisma = new PrismaClient();
-  // const rootExists = await prisma.rootUser.findUnique({
-  //   where: { email: "root@example.com" },
-  // });
+  
+  const prisma = new PrismaClient();
+  const rootExists = await prisma.rootUser.findUnique({
+    where: { email: "root@example.com" },
+  });
 
-  // if (!rootExists) {
-  //   const hashedPassword = await bcrypt.hash("12345", 10);
-  //   await prisma.rootUser.create({
-  //     data: {
-  //       email: "root@example.com",
-  //       password: hashedPassword,
-  //       full_name: "Root Admin",
-  //       is_creator: true,
-  //     },
-  //   });
-  //   console.log("✅ Root user created");
-  // } else {
-  //   console.log("ℹ️ Root user already exists");
-  // }
+  if (!rootExists) {
+    const hashedPassword = await bcrypt.hash("12345", 10);
+    await prisma.rootUser.create({
+      data: {
+        email: "root@example.com",
+        password: hashedPassword,
+        full_name: "Root Admin",
+        is_creator: true,
+      },
+    });
+    console.log("✅ Root user created");
+  } else {
+    console.log("ℹ️ Root user already exists");
+  }
 
-  //
+  
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle("Rent service API")
