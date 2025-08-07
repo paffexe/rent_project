@@ -15,14 +15,14 @@ export class CreateBookingDto {
     description: "Check-in date (YYYY-MM-DD)",
   })
   @IsDateString()
-  checkInDate: string;
+  checkInDate: Date;
 
   @ApiProperty({
     example: "2025-08-15",
     description: "Check-out date (YYYY-MM-DD)",
   })
   @IsDateString()
-  checkOutDate: string;
+  checkOutDate: Date;
 
   @ApiProperty({ example: 2, description: "Number of guests" })
   @IsInt()

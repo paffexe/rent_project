@@ -2,6 +2,7 @@ import { IsEnum, IsInt, IsString, IsOptional } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { SupportCategory, SupportStatus } from "../../../generated/prisma";
 
+
 export class CreateSupportTicketDto {
   @ApiProperty({ enum: SupportCategory })
   @IsEnum(SupportCategory)
@@ -17,10 +18,10 @@ export class CreateSupportTicketDto {
   @IsString()
   description: string;
 
-  @ApiPropertyOptional({ enum: SupportStatus, default: "PENDING" })
+  @ApiPropertyOptional({ enum: SupportStatus, default: "OPEN" })
   @IsOptional()
   @IsEnum(SupportStatus)
-  status?: SupportStatus;
+  status: SupportStatus;
 
   @ApiProperty({ example: 1 })
   @IsInt()

@@ -309,8 +309,8 @@ model Message {
 //bookings
 model Booking {
   id           Int           @id @default(autoincrement())
-  checkInDate  DateTime
-  checkOutDate DateTime
+  checkInDate  DateTime      @db.Date
+  checkOutDate DateTime      @db.Date
   guestCount   Int
   hasPet       Boolean
   totalPrice   Float

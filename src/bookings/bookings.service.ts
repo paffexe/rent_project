@@ -11,7 +11,16 @@ import { PrismaService } from "../prisma/prisma.service";
 export class BookingsService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createBookingDto: CreateBookingDto) {
-    const { listingId, guestId, guestCount, checkInDate } = createBookingDto;
+    const {
+      listingId,
+      guestId,
+      guestCount,
+      checkInDate,
+      checkOutDate,
+      hasPet,
+      totalPrice,
+      status,
+    } = createBookingDto;
 
     const listing = await this.prisma.listing.findUnique({
       where: { id: listingId },
@@ -36,7 +45,7 @@ export class BookingsService {
     }
 
     const open_date = await this.prisma.listingAvailability.findFirst({
-      where: { date: checkInDate },
+      where: { date: new Date(checkInDate) },
     });
 
     if (!open_date) {
@@ -50,6 +59,23 @@ export class BookingsService {
         `On date: ${checkInDate}, service is not available`
       );
     }
+
+    const close_date = await this.prisma.listingAvailability.findFirst({
+      where: { date: new Date(checkOutDate) },
+    });
+
+    return this.prisma.booking.create({
+      data: {
+        checkInDate: new Date(checkInDate),
+        checkOutDate: new Date(checkOutDate),
+        guestCount,
+        hasPet,
+        totalPrice,
+        status,
+        listingId,
+        guestId,
+      },
+    });
   }
   async findAll() {
     return this.prisma.booking.findMany({

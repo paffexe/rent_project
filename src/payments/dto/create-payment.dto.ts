@@ -27,15 +27,15 @@ export class CreatePaymentDto {
   status: PaymentStatus;
 
   @ApiProperty({
-    description: "ID of the related booking",
-    example: 1,
-  })
-  @ApiProperty({
     description: "Recieved money time",
     example: "2025-08-02T15:00:00Z",
   })
   paid_at?: string;
 
+  @ApiProperty({
+    description: "ID of the related booking",
+    example: 1,
+  })
   @IsInt()
   bookingId: number;
 }
